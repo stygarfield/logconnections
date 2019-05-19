@@ -4,7 +4,9 @@ This extension will log user connections, failed logins and new users.
 
 [![Build Status](https://travis-ci.com/david63/logconnections.svg?branch=master)](https://travis-ci.com/david63/logconnections)
 [![License](https://poser.pugx.org/david63/logconnections/license)](https://packagist.org/packages/david63/logconnections)
-[![Latest Stable Version](https://poser.pugx.org/david63/logconnections/v/stable)](https://packagist.org/packages/david63/logconnections)[![Latest Unstable Version](https://poser.pugx.org/david63/logconnections/v/unstable)](https://packagist.org/packages/david63/logconnections)[![Total Downloads](https://poser.pugx.org/david63/logconnections/downloads)](https://packagist.org/packages/david63/logconnections)
+[![Latest Stable Version](https://poser.pugx.org/david63/logconnections/v/stable)](https://packagist.org/packages/david63/logconnections)
+[![Latest Unstable Version](https://poser.pugx.org/david63/logconnections/v/unstable)](https://packagist.org/packages/david63/logconnections)
+[![Total Downloads](https://poser.pugx.org/david63/logconnections/downloads)](https://packagist.org/packages/david63/logconnections)
 
 ## Minimum Requirements
 * phpBB 3.2.0
