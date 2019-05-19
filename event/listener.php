@@ -137,7 +137,7 @@ class listener implements EventSubscriberInterface
 		if ($this->config['log_connect_failed'])
 		{
 			$result		= $event['result'];
-	 		$username	= $event['username'];
+			$username	= $event['username'];
 			$user_row 	= $result['user_row'];
 			$user_id	= $user_row['user_id'];
 			$user_ip 	= (in_array('user_ip', $user_row)) ? $user_row['user_ip'] : $this->user->ip;
