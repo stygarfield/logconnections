@@ -76,7 +76,6 @@ class admin_controller implements admin_interface
 	{
 		// Add the language file
 		$this->language->add_lang('acp_logconnections', 'david63/logconnections');
-
 		$form_key = 'log_connections';
 		add_form_key($form_key);
 
