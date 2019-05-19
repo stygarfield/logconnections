@@ -9,13 +9,13 @@
 
 namespace david63\logconnections\controller;
 
-use phpbb\config\config;
+use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
 use phpbb\log\log;
 use phpbb\language\language;
-use phpbb\request\request;
 use david63\logconnections\ext;
+use phpbb\config\config;
 
 /**
 * Admin controller
