@@ -9,8 +9,6 @@
 
 namespace david63\logconnections\controller;
 
-
-
 use phpbb\config\config;
 use phpbb\request\request;
 use phpbb\template\template;
