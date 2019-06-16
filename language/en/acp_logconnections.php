@@ -50,6 +50,9 @@ $lang = array_merge($lang, array(
 	'LOG_NEW_USER'				=> 'Log new user',
 	'LOG_NEW_USER_EXPLAIN'		=> 'Create a log entry whenever a new user registers on the board.',
 
+	'NEW_VERSION'				=> 'New Version',
+	'NEW_VERSION_EXPLAIN'		=> 'There is a newer version of this extension available.',
+
 	'VERSION'					=> 'Version',
 ));
 
