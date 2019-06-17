@@ -65,16 +65,13 @@ class main_controller implements main_interface
 	*/
 	public function log_new_user($event)
 	{
-		if ($this->config['log_connect_new_user'])
-		{
-			$new_user_row = $event['user_row'];
+		$new_user_row = $event['user_row'];
 
-			$additional_data['reportee_id']	= $event['user_id'];
-			$additional_data[] 				= $new_user_row['user_email'];
-			$additional_data[] 				= $this->user->data['session_browser'];
+		$additional_data['reportee_id']	= $event['user_id'];
+		$additional_data[] 				= $new_user_row['user_email'];
+		$additional_data[] 				= $this->user->data['session_browser'];
 
-			$this->log->add('user', $event['user_id'], $new_user_row['user_ip'], 'LOG_NEW_USER_CREATED', time(), $additional_data);
-		}
+		$this->log->add('user', $event['user_id'], $new_user_row['user_ip'], 'LOG_NEW_USER_CREATED', time(), $additional_data);
 	}
 
 	/**
@@ -86,24 +83,21 @@ class main_controller implements main_interface
 	*/
 	public function login_connect($event)
 	{
-		if ($this->config['log_connect_user'])
+		// We don't need to log Admin logins as they are already logged
+		$user_type = ($this->auth->acl_raw_data($this->user->data['user_id'], 'a_')) ? 'admin' : 'user';
+
+		if ($user_type == 'user')
 		{
-			// We don't need to log Admin logins as they are already logged
-			$user_type = ($this->auth->acl_raw_data($this->user->data['user_id'], 'a_')) ? 'admin' : 'user';
+			$additional_data['reportee_id']	= $this->user->data['user_id'];
+			$log_message 					= ($this->user->data['session_autologin']) ? 'LOG_AUTO_LOGIN' : 'LOG_SUCCESSFUL';
 
-			if ($user_type == 'user')
+			if ($this->config['log_browser'])
 			{
-				$additional_data['reportee_id']	= $this->user->data['user_id'];
-				$log_message 					= ($this->user->data['session_autologin']) ? 'LOG_AUTO_LOGIN' : 'LOG_SUCCESSFUL';
-
-				if ($this->config['log_browser'])
-				{
-					$additional_data[]	= $this->user->data['session_browser'];
-					$log_message 		= ($this->user->data['session_autologin']) ? 'LOG_AUTO_LOGIN_BROWSER' : 'LOG_SUCCESSFUL_BROWSER';
-				}
-
-				$this->log->add('user', $this->user->data['user_id'], $this->user->ip, $log_message, time(), $additional_data);
+				$additional_data[]	= $this->user->data['session_browser'];
+				$log_message 		= ($this->user->data['session_autologin']) ? 'LOG_AUTO_LOGIN_BROWSER' : 'LOG_SUCCESSFUL_BROWSER';
 			}
+
+			$this->log->add('user', $this->user->data['user_id'], $this->user->ip, $log_message, time(), $additional_data);
 		}
 	}
 
@@ -116,57 +110,54 @@ class main_controller implements main_interface
 	*/
 	public function failed_login($event)
 	{
-		if ($this->config['log_connect_failed'])
+		$result		= $event['result'];
+		$username	= $event['username'];
+		$user_row 	= $result['user_row'];
+		$user_id	= $user_row['user_id'];
+		$user_ip 	= (in_array('user_ip', $user_row)) ? $user_row['user_ip'] : $this->user->ip;
+
+		// If we do not have a user id then set it to anonymous user
+		$user_id = (!$user_id) ? ANONYMOUS : $user_id;
+
+		$additional_data = array();
+		$additional_data['reportee_id']	= $user_id;
+
+		// We want to log Admin fails to the Admin log and User fails to the user log
+		$log_type = ($this->auth->acl_raw_data($user_id, 'a_')) ? 'admin' : 'user';
+
+		switch ($result['status'])
 		{
-			$result		= $event['result'];
-			$username	= $event['username'];
-			$user_row 	= $result['user_row'];
-			$user_id	= $user_row['user_id'];
-			$user_ip 	= (in_array('user_ip', $user_row)) ? $user_row['user_ip'] : $this->user->ip;
+			case LOGIN_ERROR_USERNAME:
+				$error_msg			= 'ERROR_LOGIN_USERNAME';
+				$log_type			= 'user'; // This can only be user as we have no data to test
+				$additional_data[]	= $username;
+			break;
 
-			// If we do not have a user id then set it to anonymous user
-			$user_id = (!$user_id) ? ANONYMOUS : $user_id;
+			case LOGIN_ERROR_PASSWORD:
+				$error_msg	= 'ERROR_LOGIN_PASSWORD';
+			break;
 
-			$additional_data = array();
-			$additional_data['reportee_id']	= $user_id;
+			case LOGIN_ERROR_ACTIVE:
+				$error_msg	= 'ERROR_LOGIN_ACTIVE';
+			break;
 
-			// We want to log Admin fails to the Admin log and User fails to the user log
-			$log_type = ($this->auth->acl_raw_data($user_id, 'a_')) ? 'admin' : 'user';
+			case LOGIN_ERROR_ATTEMPTS:
+				$error_msg	= 'ERROR_LOGIN_ATTEMPTS';
+			break;
 
-			switch ($result['status'])
-			{
-				case LOGIN_ERROR_USERNAME:
-					$error_msg			= 'ERROR_LOGIN_USERNAME';
-					$log_type			= 'user'; // This can only be user as we have no data to test
-					$additional_data[]	= $username;
-				break;
+			case LOGIN_ERROR_PASSWORD_CONVERT:
+				$error_msg	= 'ERROR_LOGIN_PASSWORD_CONVERT';
+			break;
 
-				case LOGIN_ERROR_PASSWORD:
-					$error_msg	= 'ERROR_LOGIN_PASSWORD';
-				break;
-
-				case LOGIN_ERROR_ACTIVE:
-					$error_msg	= 'ERROR_LOGIN_ACTIVE';
-				break;
-
-				case LOGIN_ERROR_ATTEMPTS:
-					$error_msg	= 'ERROR_LOGIN_ATTEMPTS';
-				break;
-
-				case LOGIN_ERROR_PASSWORD_CONVERT:
-					$error_msg	= 'ERROR_LOGIN_PASSWORD_CONVERT';
-				break;
-
-				default: // Let's have a catchall for any other failed logins
-					$error_msg			= 'ERROR_LOGIN_UNKNOWN';
-					$log_type			= 'user';
-					$additional_data[]	= $result['status'];
-					$additional_data[]	= $username;
-				break;
-			}
-
-			$this->log->add($log_type, $user_id, $user_ip, $error_msg, time(), $additional_data);
+			default: // Let's have a catchall for any other failed logins
+				$error_msg			= 'ERROR_LOGIN_UNKNOWN';
+				$log_type			= 'user';
+				$additional_data[]	= $result['status'];
+				$additional_data[]	= $username;
+			break;
 		}
+
+		$this->log->add($log_type, $user_id, $user_ip, $error_msg, time(), $additional_data);
 	}
 
 	/**
@@ -178,17 +169,14 @@ class main_controller implements main_interface
 	*/
 	public function log_logout($event)
 	{
-		if ($this->config['log_connect_logout'])
-		{
-			$user_id 						= $event['user_id'];
-			$session_id						= $event['session_id'];
-			$additional_data['reportee_id']	= $user_id;
+		$user_id 						= $event['user_id'];
+		$session_id						= $event['session_id'];
+		$additional_data['reportee_id']	= $user_id;
 
-			// No need to log ANONYMOUS logouts
-			if ($this->user->ip && $user_id <> ANONYMOUS)
-			{
-				$this->log->add('user', $user_id, $this->user->ip, 'LOG_USER_LOGOUT', time(), $additional_data);
-			}
+		// No need to log ANONYMOUS logouts
+		if ($this->user->ip && $user_id <> ANONYMOUS)
+		{
+			$this->log->add('user', $user_id, $this->user->ip, 'LOG_USER_LOGOUT', time(), $additional_data);
 		}
 	}
 }

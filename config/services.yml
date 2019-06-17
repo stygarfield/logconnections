@@ -2,6 +2,7 @@ services:
     david63.logconnections.listener:
         class: david63\logconnections\event\listener
         arguments:
+            - '@config'		
             - '@david63.logconnections.main.controller'
         tags:
             - { name: event.listener }
@@ -9,7 +10,7 @@ services:
     david63.logconnections.main.controller:
         class: david63\logconnections\controller\main_controller
         arguments:
-            - '@config'		
+            - '@config'
             - '@log'
             - '@user'
             - '@auth'

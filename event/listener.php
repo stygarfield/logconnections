@@ -14,6 +14,7 @@ namespace david63\logconnections\event;
 */
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+use phpbb\config\config;
 use david63\logconnections\controller\main_controller;
 
 /**
@@ -21,18 +22,23 @@ use david63\logconnections\controller\main_controller;
 */
 class listener implements EventSubscriberInterface
 {
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	/** @var \david63\logconnections\controller\main_controller */
 	protected $indexoutput;
 
 	/**
 	* Constructor for listener
 	*
+	* @param \phpbb\config\config								$config				Config object
 	* @param \david63\logconnections\controller\main_controller	$main_controller	Main controller
 	*
 	* @access public
 	*/
-	public function __construct(main_controller $main_controller)
+	public function __construct(config $config, main_controller $main_controller)
 	{
+		$this->config			= $config;
 		 $this->main_controller = $main_controller;
 	}
 
@@ -65,7 +71,10 @@ class listener implements EventSubscriberInterface
 	*/
 	public function log_new_user($event)
 	{
-		 $this->main_controller->log_new_user($event);
+		if ($this->config['log_connect_new_user'])
+		{
+			$this->main_controller->log_new_user($event);
+		}
 	}
 
 	/**
@@ -77,7 +86,10 @@ class listener implements EventSubscriberInterface
 	*/
 	public function login_connect($event)
 	{
-		$this->main_controller->login_connect($event);
+		if ($this->config['log_connect_user'])
+		{
+			$this->main_controller->login_connect($event);
+		}
 	}
 
 	/**
@@ -89,7 +101,10 @@ class listener implements EventSubscriberInterface
 	*/
 	public function failed_login($event)
 	{
-		$this->main_controller->failed_login($event);
+		if ($this->config['log_connect_failed'])
+		{
+			$this->main_controller->failed_login($event);
+		}
 	}
 
 	/**
@@ -101,6 +116,9 @@ class listener implements EventSubscriberInterface
 	*/
 	public function log_logout($event)
 	{
-		$this->main_controller->log_logout($event);
+		if ($this->config['log_connect_logout'])
+		{
+			$this->main_controller->log_logout($event);
+		}
 	}
 }
