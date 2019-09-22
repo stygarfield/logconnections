@@ -26,7 +26,7 @@ class listener implements EventSubscriberInterface
 	protected $config;
 
 	/** @var \david63\logconnections\controller\main_controller */
-	protected $indexoutput;
+	protected $main_controller;
 
 	/**
 	* Constructor for listener
@@ -39,7 +39,7 @@ class listener implements EventSubscriberInterface
 	public function __construct(config $config, main_controller $main_controller)
 	{
 		$this->config			= $config;
-		 $this->main_controller = $main_controller;
+		$this->main_controller	= $main_controller;
 	}
 
 	/**

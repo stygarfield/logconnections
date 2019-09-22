@@ -54,4 +54,6 @@ $lang = array_merge($lang, array(
 	'LOG_USER_LOGOUT'				=> '<strong>User logged out</strong>',
 
 	'MANAGE_DEFAULTS'				=> 'Manage settings',
+
+	'UKNOWN_STATUS'					=> 'unknown status code',
 ));

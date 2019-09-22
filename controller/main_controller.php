@@ -13,6 +13,7 @@ use phpbb\config\config;
 use phpbb\log\log;
 use phpbb\user;
 use phpbb\auth\auth;
+use phpbb\language\language;
 
 /**
 * Main controller
@@ -31,22 +32,27 @@ class main_controller implements main_interface
 	/** @var \phpbb\auth\auth */
 	protected $auth;
 
+	/** @var \phpbb\language\language */
+	protected $language;
+
 	/**
 	* Constructor for listener
 	*
-	* @param \phpbb\config\config	$config	Config object
-	* @param \phpbb\log\log			$log	phpBB log
-	* @param \phpbb\user            $user	User object
-	* @param \phpbb\auth\auth 		$auth	Auth object
+	* @param \phpbb\config\config		$config		Config object
+	* @param \phpbb\log\log				$log		phpBB log
+	* @param \phpbb\user            	$user		User object
+	* @param \phpbb\auth\auth 			$auth		Auth object
+	* @param \phpbb\language\language	$language	Language object
 	*
 	* @access public
 	*/
-	public function __construct(config $config, log $log, user $user, auth $auth)
+	public function __construct(config $config, log $log, user $user, auth $auth, language $language)
 	{
 		$this->config	= $config;
 		$this->log		= $log;
 		$this->user		= $user;
 		$this->auth		= $auth;
+		$this->language	= $language;
 	}
 
 	/**
@@ -152,7 +158,14 @@ class main_controller implements main_interface
 			default: // Let's have a catchall for any other failed logins
 				$error_msg			= 'ERROR_LOGIN_UNKNOWN';
 				$log_type			= 'user';
-				$additional_data[]	= $result['status'];
+				if (empty($result['status']))
+				{
+					$additional_data[] = $this->language->lang('UKNOWN_STATUS');
+				}
+				else
+				{
+					$additional_data[] = $result['status'];
+				}
 				$additional_data[]	= $username;
 			break;
 		}

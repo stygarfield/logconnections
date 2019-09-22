@@ -14,6 +14,7 @@ services:
             - '@log'
             - '@user'
             - '@auth'
+            - '@language'			
 
     david63.logconnections.admin.controller:
         class: david63\logconnections\controller\admin_controller
