@@ -36,17 +36,19 @@ if (empty($lang) || !is_array($lang))
 // ’ » “ ” …
 //
 
+
 $lang = array_merge($lang, array(
-	'LOG_BROWSER'				=> 'Log user’s browser',
-	'LOG_BROWSER_EXPLAIN'		=> 'Include the user’s browser information in the log entry for User connections.',
-	'LOG_CONNECTION'			=> 'Log connection',
-	'LOG_CONNECTION_EXPLAIN'	=> 'Create a log entry whenever a user logs on to the board.',
-	'LOG_CONNECTIONS_EXPLAIN'	=> 'Here you can set the options as to which type of connection you want to have logged.',
-	'LOG_CONNECTIONS_OPTIONS'	=> 'Log connection options',
-	'LOG_FAILED'				=> 'Log failed connections',
-	'LOG_FAILED_EXPLAIN'		=> 'Create a log entry whenever a user makes a failed attempt to log on to the board.',
-	'LOG_LOGOUT'				=> 'Log logouts',
-	'LOG_LOGOUT_EXPLAIN'		=> 'Create a log entry whenever a user logs out of the board.',
-	'LOG_NEW_USER'				=> 'Log new user',
-	'LOG_NEW_USER_EXPLAIN'		=> 'Create a log entry whenever a new user registers on the board.',
+	'DONATE'					=> 'Donate',
+	'DONATE_EXTENSIONS'			=> 'Donate to my extensions',
+	'DONATE_EXTENSIONS_EXPLAIN'	=> 'This extension, as with all of my extensions, is totally free of charge. If you have benefited from using it then please consider making a donation by clicking the PayPal donation button opposite - I would appreciate it. I promise that there will be no spam nor requests for further donations, although they would always be welcome.',
+
+	'NEW_VERSION'				=> 'New Version - %s',
+	'NEW_VERSION_EXPLAIN'		=> 'Version %1$s of this extension is now available for download.<br>%2$s',
+	'NEW_VERSION_LINK'			=> 'Download here',
+	'NO_VERSION_EXPLAIN'		=> 'Version update information is not available.',
+
+	'PAYPAL_BUTTON'				=> 'Donate with PayPal button',
+	'PAYPAL_TITLE'				=> 'PayPal - The safer, easier way to pay online!',
+
+	'VERSION'					=> 'Version',
 ));

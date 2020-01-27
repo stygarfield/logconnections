@@ -155,18 +155,21 @@ class main_controller implements main_interface
 				$error_msg	= 'ERROR_LOGIN_PASSWORD_CONVERT';
 			break;
 
+			case LOGIN_BREAK:
+				$error_msg	= 'ERROR_LOGIN_BREAK';
+			break;
+
 			default: // Let's have a catchall for any other failed logins
-				$error_msg			= 'ERROR_LOGIN_UNKNOWN';
-				$log_type			= 'user';
-				if (empty($result['status']))
+				$log_type = 'user';
+				if ($result['status'] != '')
 				{
-					$additional_data[] = $this->language->lang('UKNOWN_STATUS');
+					$error_msg = $this->language->lang('ERROR_LOGIN_UNKNOWN', $result['status']);
 				}
 				else
 				{
-					$additional_data[] = $result['status'];
+					$error_msg = $this->language->lang('ERROR_LOGIN_UNKNOWN', $this->language->lang('UKNOWN_STATUS'));
 				}
-				$additional_data[]	= $username;
+				$additional_data[] = $username;
 			break;
 		}
 
