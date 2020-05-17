@@ -17,7 +17,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -56,5 +56,5 @@ $lang = array_merge($lang, array(
 
 	'MANAGE_DEFAULTS'				=> 'Manage settings',
 
-	'UKNOWN_STATUS'					=> 'unknown status code',
+	'UKNOWN_STATUS_ERROR'			=> '<strong>An unknown login error occured</strong><br>» %1$s',
 ));

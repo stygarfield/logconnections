@@ -116,6 +116,7 @@ class main_controller implements main_interface
 	*/
 	public function failed_login($event)
 	{
+		$error_msg	= $event['error_msg'];
 		$result		= $event['result'];
 		$username	= $event['username'];
 		$user_row 	= $result['user_row'];
@@ -125,7 +126,7 @@ class main_controller implements main_interface
 		// If we do not have a user id then set it to anonymous user
 		$user_id = (!$user_id) ? ANONYMOUS : $user_id;
 
-		$additional_data = array();
+		$additional_data = [];
 		$additional_data['reportee_id']	= $user_id;
 
 		// We want to log Admin fails to the Admin log and User fails to the user log
@@ -163,11 +164,12 @@ class main_controller implements main_interface
 				$log_type = 'user';
 				if ($result['status'] != '')
 				{
-					$error_msg = $this->language->lang('ERROR_LOGIN_UNKNOWN', $result['status']);
+					$additional_data[] = $result['status'];
+					$error_msg = 'ERROR_LOGIN_UNKNOWN';
 				}
 				else
 				{
-					$error_msg = $this->language->lang('ERROR_LOGIN_UNKNOWN', $this->language->lang('UKNOWN_STATUS'));
+					//$error_msg = 'UKNOWN_STATUS_ERROR';
 				}
 				$additional_data[] = $username;
 			break;

@@ -9,6 +9,9 @@ This extension will log user connections, failed logins and new users.
 [![Total Downloads](https://poser.pugx.org/david63/logconnections/downloads)](https://packagist.org/packages/david63/logconnections)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f95c96b323f342c08a6da39f9eabfe5b)](https://www.codacy.com/manual/david63/logconnections?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=david63/logconnections&amp;utm_campaign=Badge_Grade)
 
+[![Compatible](https://img.shields.io/badge/compatible-phpBB:3.2.x-blue.svg)](https://shields.io/)
+[![Compatible](https://img.shields.io/badge/compatible-phpBB:3.3.x-blue.svg)](https://shields.io/)
+
 ## Minimum Requirements
 * phpBB 3.2.0
 * PHP 5.4
