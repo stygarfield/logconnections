@@ -2,8 +2,8 @@
 	"name": "david63/logconnections",
 	"type": "phpbb-extension",
 	"description": "This extension will log user connections, failed logins and new users.",
-	"version": "2.1.0-RC5",
-	"time": "2019-05-12",
+	"version": "2.1.0-RC6",
+	"time": "2020-05-18",
 		"keywords": [
 		"phpbb",
 		"extension",
