@@ -31,9 +31,8 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Constructor for listener
 	 *
-	 * @param config     $config     Config object
-	 *
-	 * @param \david63\logconnections\controller\main_controller $main_controller    Main controller
+	 * @param config     		$config     		Config object
+	 * @param main_controller 	$main_controller    Main controller
 	 *
 	 * @access public
 	 */
