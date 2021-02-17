@@ -25,7 +25,7 @@ class listener implements EventSubscriberInterface
 	/** @var config */
 	protected $config;
 
-	/** @var \david63\logconnections\controller\main_controller */
+	/** @var main_controller */
 	protected $main_controller;
 
 	/**
