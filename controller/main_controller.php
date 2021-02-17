@@ -1,11 +1,11 @@
 <?php
 /**
-*
-* @package Log Connections
-* @copyright (c) 2017 david63
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-*/
+ *
+ * @package Log Connections
+ * @copyright (c) 2017 david63
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ */
 
 namespace david63\logconnections\controller;
 
@@ -16,77 +16,77 @@ use phpbb\auth\auth;
 use phpbb\language\language;
 
 /**
-* Main controller
-*/
-class main_controller implements main_interface
+ * Main controller
+ */
+class main_controller
 {
-	/** @var \phpbb\config\config */
+	/** @var config */
 	protected $config;
 
-	/** @var \phpbb\log\log */
+	/** @var log */
 	protected $log;
 
-	/** @var \phpbb\user */
+	/** @var user */
 	protected $user;
 
-	/** @var \phpbb\auth\auth */
+	/** @var auth */
 	protected $auth;
 
-	/** @var \phpbb\language\language */
+	/** @var language */
 	protected $language;
 
 	/**
-	* Constructor for listener
-	*
-	* @param \phpbb\config\config		$config		Config object
-	* @param \phpbb\log\log				$log		phpBB log
-	* @param \phpbb\user            	$user		User object
-	* @param \phpbb\auth\auth 			$auth		Auth object
-	* @param \phpbb\language\language	$language	Language object
-	*
-	* @access public
-	*/
+	 * Constructor for listener
+	 *
+	 * @param config     $config     Config object
+	 * @param log        $log        phpBB log
+	 * @param user       $user       User object
+	 * @param auth       $auth       Auth object
+	 * @param language   $language   Language object
+	 *
+	 * @access public
+	 */
 	public function __construct(config $config, log $log, user $user, auth $auth, language $language)
 	{
-		$this->config	= $config;
-		$this->log		= $log;
-		$this->user		= $user;
-		$this->auth		= $auth;
-		$this->language	= $language;
+		$this->config   = $config;
+		$this->log      = $log;
+		$this->user     = $user;
+		$this->auth     = $auth;
+		$this->language = $language;
 	}
 
 	/**
-	* Controller for logconnections
-	*
-	* @param string		$name
-	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
-	*/
+	 * Controller for logconnections
+	 *
+	 * @param string     $name
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 */
 
 	/**
-	* Log the new user
-	*
-	* @param object $event The event object
-	* @return null
-	* @access public
-	*/
+	 * Log the new user
+	 *
+	 * @param object $event The event object
+	 * @return null
+	 * @access public
+	 */
 	public function log_new_user($event)
 	{
 		$new_user_row = $event['user_row'];
 
-		$additional_data['reportee_id']	= $event['user_id'];
-		$additional_data[] 				= $new_user_row['user_email'];
-		$additional_data[] 				= $this->user->data['session_browser'];
+		$additional_data[]	= $event['user_id'];
+		$additional_data[]	= $new_user_row['user_email'];
+		$additional_data[]	= $this->user->data['session_browser'];
 
 		$this->log->add('user', $event['user_id'], $new_user_row['user_ip'], 'LOG_NEW_USER_CREATED', time(), $additional_data);
 	}
 
 	/**
-	* Log the successful connection
-	*
-	* @param object $event The event object
-	* @return null
-	* @access public
-	*/
+	 * Log the successful connection
+	 *
+	 * @param object $event The event object
+	 * @return null
+	 * @access public
+	 */
 	public function login_connect($event)
 	{
 		// We don't need to log Admin logins as they are already logged
@@ -94,13 +94,13 @@ class main_controller implements main_interface
 
 		if ($user_type == 'user')
 		{
-			$additional_data['reportee_id']	= $this->user->data['user_id'];
-			$log_message 					= ($this->user->data['session_autologin']) ? 'LOG_AUTO_LOGIN' : 'LOG_SUCCESSFUL';
+			$additional_data[]	= $this->user->data['user_id'];
+			$log_message		= ($this->user->data['session_autologin']) ? 'LOG_AUTO_LOGIN' : 'LOG_SUCCESSFUL';
 
 			if ($this->config['log_browser'])
 			{
-				$additional_data[]	= $this->user->data['session_browser'];
-				$log_message 		= ($this->user->data['session_autologin']) ? 'LOG_AUTO_LOGIN_BROWSER' : 'LOG_SUCCESSFUL_BROWSER';
+				$additional_data[] = $this->user->data['session_browser'];
+				$log_message       = ($this->user->data['session_autologin']) ? 'LOG_AUTO_LOGIN_BROWSER' : 'LOG_SUCCESSFUL_BROWSER';
 			}
 
 			$this->log->add('user', $this->user->data['user_id'], $this->user->ip, $log_message, time(), $additional_data);
@@ -108,26 +108,26 @@ class main_controller implements main_interface
 	}
 
 	/**
-	* Log failed login attempts
-	*
-	* @param object $event The event object
-	* @return null
-	* @access public
-	*/
+	 * Log failed login attempts
+	 *
+	 * @param object $event The event object
+	 * @return null
+	 * @access public
+	 */
 	public function failed_login($event)
 	{
-		$error_msg	= $event['error_msg'];
-		$result		= $event['result'];
-		$username	= $event['username'];
-		$user_row 	= $result['user_row'];
-		$user_id	= $user_row['user_id'];
-		$user_ip 	= (in_array('user_ip', $user_row)) ? $user_row['user_ip'] : $this->user->ip;
+		$error_msg = $event['error_msg'];
+		$result    = $event['result'];
+		$username  = $event['username'];
+		$user_row  = $result['user_row'];
+		$user_id   = $user_row['user_id'];
+		$user_ip   = isset($user_row['user_ip']) ? $user_row['user_ip'] : $this->user->ip;
 
 		// If we do not have a user id then set it to anonymous user
 		$user_id = (!$user_id) ? ANONYMOUS : $user_id;
 
-		$additional_data = [];
-		$additional_data['reportee_id']	= $user_id;
+		$additional_data   = [];
+		$additional_data[] = (int) $user_id;
 
 		// We want to log Admin fails to the Admin log and User fails to the user log
 		$log_type = ($this->auth->acl_raw_data($user_id, 'a_')) ? 'admin' : 'user';
@@ -135,64 +135,64 @@ class main_controller implements main_interface
 		switch ($result['status'])
 		{
 			case LOGIN_ERROR_USERNAME:
-				$error_msg			= 'ERROR_LOGIN_USERNAME';
-				$log_type			= 'user'; // This can only be user as we have no data to test
-				$additional_data[]	= $username;
-			break;
+				$error_msg         = 'ERROR_LOGIN_USERNAME';
+				$log_type          = 'user'; // This can only be user as we have no data to test
+				$additional_data[] = $username;
+				break;
 
 			case LOGIN_ERROR_PASSWORD:
-				$error_msg	= 'ERROR_LOGIN_PASSWORD';
-			break;
+				$error_msg = 'ERROR_LOGIN_PASSWORD';
+				break;
 
 			case LOGIN_ERROR_ACTIVE:
-				$error_msg	= 'ERROR_LOGIN_ACTIVE';
-			break;
+				$error_msg = 'ERROR_LOGIN_ACTIVE';
+				break;
 
 			case LOGIN_ERROR_ATTEMPTS:
-				$error_msg	= 'ERROR_LOGIN_ATTEMPTS';
-			break;
+				$error_msg = 'ERROR_LOGIN_ATTEMPTS';
+				break;
 
 			case LOGIN_ERROR_PASSWORD_CONVERT:
-				$error_msg	= 'ERROR_LOGIN_PASSWORD_CONVERT';
-			break;
+				$error_msg = 'ERROR_LOGIN_PASSWORD_CONVERT';
+				break;
 
 			case LOGIN_BREAK:
-				$error_msg	= 'ERROR_LOGIN_BREAK';
-			break;
+				$error_msg = 'ERROR_LOGIN_BREAK';
+				break;
 
 			default: // Let's have a catchall for any other failed logins
 				$log_type = 'user';
 				if ($result['status'] != '')
 				{
 					$additional_data[] = $result['status'];
-					$error_msg = 'ERROR_LOGIN_UNKNOWN';
+					$error_msg         = 'ERROR_LOGIN_UNKNOWN';
 				}
 				else
 				{
 					//$error_msg = 'UKNOWN_STATUS_ERROR';
 				}
 				$additional_data[] = $username;
-			break;
+				break;
 		}
 
 		$this->log->add($log_type, $user_id, $user_ip, $error_msg, time(), $additional_data);
 	}
 
 	/**
-	* Log the user logging out
-	*
-	* @param object $event The event object
-	* @return null
-	* @access public
-	*/
+	 * Log the user logging out
+	 *
+	 * @param object $event The event object
+	 * @return null
+	 * @access public
+	 */
 	public function log_logout($event)
 	{
-		$user_id 						= $event['user_id'];
-		$session_id						= $event['session_id'];
-		$additional_data['reportee_id']	= $user_id;
+		$user_id                        = $event['user_id'];
+		$session_id                     = $event['session_id'];
+		$additional_data['reportee_id'] = $user_id;
 
 		// No need to log ANONYMOUS logouts
-		if ($this->user->ip && $user_id <> ANONYMOUS)
+		if ($this->user->ip && $user_id != ANONYMOUS)
 		{
 			$this->log->add('user', $user_id, $this->user->ip, 'LOG_USER_LOGOUT', time(), $additional_data);
 		}

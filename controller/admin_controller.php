@@ -1,11 +1,11 @@
 <?php
 /**
-*
-* @package Log Connections
-* @copyright (c) 2017 david63
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-*/
+ *
+ * @package Log Connections
+ * @copyright (c) 2017 david63
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ */
 
 namespace david63\logconnections\controller;
 
@@ -18,69 +18,74 @@ use phpbb\language\language;
 use david63\logconnections\core\functions;
 
 /**
-* Admin controller
-*/
-class admin_controller implements admin_interface
+ * Admin controller
+ */
+class admin_controller
 {
-	/** @var \phpbb\config\config */
+	/** @var config */
 	protected $config;
 
-	/** @var \phpbb\request\request */
+	/** @var request */
 	protected $request;
 
-	/** @var \phpbb\template\template */
+	/** @var template */
 	protected $template;
 
-	/** @var \phpbb\user */
+	/** @var user */
 	protected $user;
 
 	/** @var \phpbb\log */
 	protected $log;
 
-	/** @var \phpbb\language\language */
+	/** @var language */
 	protected $language;
 
-	/** @var \david63\logconnections\core\functions */
+	/** @var functions */
 	protected $functions;
+
+	/** @var string */
+	protected $ext_images_path;
 
 	/** @var string Custom form action */
 	protected $u_action;
 
 	/**
-	* Constructor for admin controller
-	*
-	* @param \phpbb\config\config					$config		Config object
-	* @param \phpbb\request\request					$request	Request object
-	* @param \phpbb\template\template				$template	Template object
-	* @param \phpbb\user							$user		User object
-	* @param \phpbb\log\log							$log		phpBB log
-	* @param \phpbb\language\language				$language	Language object
-	* @param \david63\logconnections\core\functions	$functions	Functions for the extension
-	*
-	* @return \david63\logconnections\controller\admin_controller
-	* @access public
-	*/
-	public function __construct(config $config, request $request, template $template, user $user, log $log, language $language, functions $functions)
+	 * Constructor for admin controller
+	 *
+	 * @param config     	$config     		Config object
+	 * @param request    	$request    		Request object
+	 * @param template   	$template   		Template object
+	 * @param user       	$user       		User object
+	 * @param log        	$log        		phpBB log
+	 * @param language   	$language   		Language object
+	 * @param functions		$functions  		Functions for the extension
+	 * @param string		$ext_images_path	Path to this extension's images
+	 *
+	 * @return \david63\logconnections\controller\admin_controller
+	 * @access public
+	 */
+	public function __construct(config $config, request $request, template $template, user $user, log $log, language $language, functions $functions, string $ext_images_path)
 	{
-		$this->config		= $config;
-		$this->request		= $request;
-		$this->template		= $template;
-		$this->user			= $user;
-		$this->log			= $log;
-		$this->language		= $language;
-		$this->functions	= $functions;
+		$this->config    		= $config;
+		$this->request   		= $request;
+		$this->template  		= $template;
+		$this->user      		= $user;
+		$this->log       		= $log;
+		$this->language  		= $language;
+		$this->functions 		= $functions;
+		$this->ext_images_path	= $ext_images_path;
 	}
 
 	/**
-	* Display the ouptions for this extension
-	*
-	* @return null
-	* @access public
-	*/
+	 * Display the ouptions for this extension
+	 *
+	 * @return null
+	 * @access public
+	 */
 	public function display_options()
 	{
 		// Add the language files
-		$this->language->add_lang(array('acp_logconnections', 'acp_common'), $this->functions->get_ext_namespace());
+		$this->language->add_lang(['acp_logconnections', 'acp_common'], $this->functions->get_ext_namespace());
 
 		$form_key = 'log_connections';
 		add_form_key($form_key);
@@ -104,39 +109,47 @@ class admin_controller implements admin_interface
 		}
 
 		// Template vars for header panel
-		$version_data	= $this->functions->version_check();
+		$version_data = $this->functions->version_check();
 
-		$this->template->assign_vars(array(
-			'DOWNLOAD'			=> (array_key_exists('download', $version_data)) ? '<a class="download" href =' . $version_data['download'] . '>' . $this->language->lang('NEW_VERSION_LINK') . '</a>' : '',
+		// Are the PHP and phpBB versions valid for this extension?
+		$valid = $this->functions->ext_requirements();
 
-			'HEAD_TITLE'		=> $this->language->lang('LOG_CONNECTIONS'),
+		$this->template->assign_vars([
+			'DOWNLOAD' 			=> (array_key_exists('download', $version_data)) ? '<a class="download" href =' . $version_data['download'] . '>' . $this->language->lang('NEW_VERSION_LINK') . '</a>' : '',
+
+ 			'EXT_IMAGE_PATH'	=> $this->ext_images_path,
+
+			'HEAD_TITLE' 		=> $this->language->lang('LOG_CONNECTIONS'),
 			'HEAD_DESCRIPTION'	=> $this->language->lang('LOG_CONNECTIONS_EXPLAIN'),
 
-			'NAMESPACE'			=> $this->functions->get_ext_namespace('twig'),
+			'NAMESPACE' 		=> $this->functions->get_ext_namespace('twig'),
 
-			'S_BACK'			=> $back,
-			'S_VERSION_CHECK'	=> (array_key_exists('current', $version_data)) ? $version_data['current'] : false,
+			'PHP_VALID' 		=> $valid[0],
+			'PHPBB_VALID' 		=> $valid[1],
 
-			'VERSION_NUMBER'	=> $this->functions->get_meta('version'),
-		));
+			'S_BACK' 			=> $back,
+			'S_VERSION_CHECK' 	=> (array_key_exists('current', $version_data)) ? $version_data['current'] : false,
 
-		$this->template->assign_vars(array(
-			'LOG_BROWSER'				=> isset($this->config['log_browser']) ? $this->config['log_browser'] : false,
-			'LOG_CONNECTION'			=> isset($this->config['log_connect_user']) ? $this->config['log_connect_user'] : true,
-			'LOG_FAILED'				=> isset($this->config['log_connect_failed']) ? $this->config['log_connect_failed'] : true,
-			'LOG_LOGOUT'				=> isset($this->config['log_connect_logout']) ? $this->config['log_connect_logout'] : false,
-			'LOG_NEW_USER'				=> isset($this->config['log_connect_new_user']) ? $this->config['log_connect_new_user'] : true,
+			'VERSION_NUMBER' 	=> $this->functions->get_meta('version'),
+		]);
 
-			'U_ACTION'					=> $this->u_action,
-		));
+		$this->template->assign_vars([
+			'LOG_BROWSER' 		=> isset($this->config['log_browser']) ? $this->config['log_browser'] : false,
+			'LOG_CONNECTION'	=> isset($this->config['log_connect_user']) ? $this->config['log_connect_user'] : true,
+			'LOG_FAILED' 		=> isset($this->config['log_connect_failed']) ? $this->config['log_connect_failed'] : true,
+			'LOG_LOGOUT' 		=> isset($this->config['log_connect_logout']) ? $this->config['log_connect_logout'] : false,
+			'LOG_NEW_USER' 		=> isset($this->config['log_connect_new_user']) ? $this->config['log_connect_new_user'] : true,
+
+			'U_ACTION' 			=> $this->u_action,
+		]);
 	}
 
 	/**
-	* Set the options a user can configure
-	*
-	* @return null
-	* @access protected
-	*/
+	 * Set the options a user can configure
+	 *
+	 * @return null
+	 * @access protected
+	 */
 	protected function set_options()
 	{
 		$this->config->set('log_browser', $this->request->variable('log_browser', false));
@@ -147,12 +160,12 @@ class admin_controller implements admin_interface
 	}
 
 	/**
-	* Set page url
-	*
-	* @param string $u_action Custom form action
-	* @return null
-	* @access public
-	*/
+	 * Set page url
+	 *
+	 * @param string $u_action Custom form action
+	 * @return null
+	 * @access public
+	 */
 	public function set_page_url($u_action)
 	{
 		$this->u_action = $u_action;
