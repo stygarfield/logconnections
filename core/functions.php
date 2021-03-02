@@ -1,7 +1,8 @@
 <?php
 /**
  *
-
+ * @package Log Connections
+ * @copyright (c) 2017 david63
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
