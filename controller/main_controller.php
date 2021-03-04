@@ -38,11 +38,11 @@ class main_controller
 	/**
 	 * Constructor for listener
 	 *
-	 * @param config     $config     Config object
-	 * @param log        $log        phpBB log
-	 * @param user       $user       User object
-	 * @param auth       $auth       Auth object
-	 * @param language   $language   Language object
+	 * @param config     		$config     Config object
+	 * @param log        		$log        phpBB log
+	 * @param user       		$user       User object
+	 * @param auth       		$auth       Auth object
+	 * @param language   		$language   Language object
 	 *
 	 * @access public
 	 */
@@ -116,18 +116,15 @@ class main_controller
 	 */
 	public function failed_login($event)
 	{
-		$error_msg = $event['error_msg'];
-		$result    = $event['result'];
-		$username  = $event['username'];
-		$user_row  = $result['user_row'];
-		$user_id   = $user_row['user_id'];
-		$user_ip   = isset($user_row['user_ip']) ? $user_row['user_ip'] : $this->user->ip;
-
-		// If we do not have a user id then set it to anonymous user
-		$user_id = (!$user_id) ? ANONYMOUS : $user_id;
+		$error_msg	= $event['err'];
+		$result    	= $event['result'];
+		$user_row	= $result['user_row'];
+		$username  	= $event['username'];
+		$user_id	= $user_row['user_id'];
+		$user_ip	= (!empty($user_row['user_ip'])) ? $user_row['user_ip'] : $this->user->ip;
 
 		$additional_data   = [];
-		$additional_data[] = (int) $user_id;
+		$additional_data['reportee_id'] = (int) $user_id;
 
 		// We want to log Admin fails to the Admin log and User fails to the user log
 		$log_type = ($this->auth->acl_raw_data($user_id, 'a_')) ? 'admin' : 'user';
@@ -169,7 +166,7 @@ class main_controller
 				}
 				else
 				{
-					//$error_msg = 'UKNOWN_STATUS_ERROR';
+					$error_msg = 'UKNOWN_STATUS_ERROR';
 				}
 				$additional_data[] = $username;
 				break;

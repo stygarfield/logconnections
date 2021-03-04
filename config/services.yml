@@ -5,7 +5,7 @@ services:
     _defaults:
         autowire: true
         bind:
-            $ext_images_path: '%core.root_path%ext/david63/forumsubs/adm/style/images'
+            $ext_images_path: '%core.root_path%ext/david63/logconnections/adm/style/images'
         public: true
 
     david63.logconnections.listener:
