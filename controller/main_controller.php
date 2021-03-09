@@ -94,11 +94,12 @@ class main_controller
 
 		if ($user_type == 'user')
 		{
-			$additional_data[]	= $this->user->data['user_id'];
-			$log_message		= ($this->user->data['session_autologin']) ? 'LOG_AUTO_LOGIN' : 'LOG_SUCCESSFUL';
+			$additional_data['reportee_id']	= $this->user->data['user_id'];
+			$log_message					= ($this->user->data['session_autologin']) ? 'LOG_AUTO_LOGIN' : 'LOG_SUCCESSFUL';
 
 			if ($this->config['log_browser'])
 			{
+
 				$additional_data[] = $this->user->data['session_browser'];
 				$log_message       = ($this->user->data['session_autologin']) ? 'LOG_AUTO_LOGIN_BROWSER' : 'LOG_SUCCESSFUL_BROWSER';
 			}
