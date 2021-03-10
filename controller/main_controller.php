@@ -139,7 +139,14 @@ class main_controller
 				break;
 
 			case LOGIN_ERROR_PASSWORD:
-				$error_msg = 'ERROR_LOGIN_PASSWORD';
+				if (!array_key_exists('user_password', $user_row))
+				{
+					$error_msg = 'NO_PASSWORD_ENTERED';
+				}
+				else
+				{
+					$error_msg = 'ERROR_LOGIN_PASSWORD';
+				}
 				break;
 
 			case LOGIN_ERROR_ACTIVE:

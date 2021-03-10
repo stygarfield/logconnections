@@ -58,5 +58,7 @@ $lang = array_merge($lang, [
 
 	'MANAGE_DEFAULTS' 				=> 'Manage settings',
 
+	'NO_PASSWORD_ENTERED'			=> '<strong>No password entered</strong>',
+
 	'UKNOWN_STATUS_ERROR' 			=> '<strong>An unknown login error occured</strong><br>» %1$s',
 ]);
