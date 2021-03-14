@@ -73,11 +73,13 @@ class main_controller
 	{
 		$new_user_row = $event['user_row'];
 
-		$additional_data[]	= $event['user_id'];
-		$additional_data[]	= $new_user_row['user_email'];
-		$additional_data[]	= $this->user->data['session_browser'];
+		$additional_data['reportee_id']	= $event['user_id'];
+		$additional_data[]				= $new_user_row['user_email'];
+		$additional_data[]				= $this->user->data['session_browser'];
 
-		$this->log->add('user', $event['user_id'], $new_user_row['user_ip'], 'LOG_NEW_USER_CREATED', time(), $additional_data);
+		$user_ip = (array_key_exists('user_ip', $new_user_row)) ? $new_user_row['user_ip'] : '0.0.0.0';
+
+		$this->log->add('user', $event['user_id'], $user_ip, 'LOG_NEW_USER_CREATED', time(), $additional_data);
 	}
 
 	/**
