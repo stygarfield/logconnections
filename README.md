@@ -17,7 +17,7 @@ This extension will log user connections, failed logins and new users.
 * PHP 7.1.3
 
 ## Install
-1. [Download the latest release](https://github.com/david63/logconnections/archive/3.2.zip) and unzip it.
+1. [Download the latest release](https://github.com/david63/logconnections/archive/3.3.zip) and unzip it.
 2. Unzip the downloaded release and copy it to the `ext` directory of your phpBB board.
 3. Navigate in the ACP to `Customise -> Manage extensions`.
 4. Look for `Log user connections` under the Disabled Extensions list and click its `Enable` link.
